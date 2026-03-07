@@ -1,0 +1,32 @@
+# Credentials — never commit
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Android
+android-app/.gradle/
+android-app/local.properties
+android-app/app/build/
+android-app/build/
+*.apk
+*.aab
+
+# Android keystore
+*.jks
+*.keystore
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
