@@ -1,0 +1,4 @@
+# Install these only when deploying with Azure (requires Python <=3.13)
+# pip install -r requirements.txt -r requirements-azure.txt
+azure-storage-blob==12.20.0
+openai==1.30.1
