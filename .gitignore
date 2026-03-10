@@ -30,3 +30,8 @@ android-app/build/
 # OS
 .DS_Store
 Thumbs.db
+
+#others
+prompt.txt
+superprompt.txt
+system arch.txt

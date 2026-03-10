@@ -15,8 +15,17 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        // Set your deployed backend URL here (or override per flavor)
-        buildConfigField("String", "BACKEND_URL", "\"${project.findProperty("backendUrl") ?: "http://10.0.2.2:8000"}\"")
+        // Read from local.properties (never committed to git)
+        val localProps = java.util.Properties().also { props ->
+            val f = rootProject.file("local.properties")
+            if (f.exists()) props.load(f.inputStream())
+        }
+        buildConfigField("String", "BACKEND_URL",
+            "\"${localProps.getProperty("backendUrl", "http://10.0.2.2:8080")}\"")
+        buildConfigField("String", "SPEECH_KEY",
+            "\"${localProps.getProperty("AZURE_SPEECH_KEY", "")}\"")
+        buildConfigField("String", "SPEECH_REGION",
+            "\"${localProps.getProperty("AZURE_SPEECH_REGION", "eastasia")}\"")
     }
 
     buildFeatures {

@@ -1,0 +1,14 @@
+# Copy this to local.properties (gitignored) and fill in your values.
+
+# Your Android SDK path — update to match your machine
+sdk.dir=C\:\\Users\\YourUsername\\AppData\\Local\\Android\\Sdk
+
+# Backend URL
+# For emulator connecting to local backend: use 10.0.2.2
+# For physical device: use your machine's local IP (e.g. 192.168.1.x)
+# For cloud deployment: use your Azure Container Apps URL
+backendUrl=http\://10.0.2.2\:8080
+
+# Azure AI Speech (from your Azure AI Services resource → Keys and Endpoint)
+AZURE_SPEECH_KEY=your-speech-key-here
+AZURE_SPEECH_REGION=eastasia
