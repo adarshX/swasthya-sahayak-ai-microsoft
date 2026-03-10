@@ -47,6 +47,12 @@ def http_get(path: str) -> dict:
         return json.loads(resp.read())
 
 
+def http_get_text(path: str) -> str:
+    req = urllib.request.Request(f"{BACKEND_URL}{path}")
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return resp.read().decode()
+
+
 def http_post(path: str, body: dict) -> dict:
     data = json.dumps(body).encode()
     req = urllib.request.Request(
@@ -189,10 +195,65 @@ def section_summary():
 
 
 # ===========================================================================
-# Section 5 - Error / Edge Cases
+# Section 5 - Dashboard and Records API
+# ===========================================================================
+def section_dashboard():
+    print(f"\n{BOLD}{CYAN}[ 5 ] SUPERVISOR DASHBOARD  (GET /  and  GET /records){RESET}")
+
+    # Dashboard HTML
+    try:
+        html = http_get_text("/")
+        if "Swasthya Sahayak" in html and "cases-summary" in html:
+            ok("Dashboard HTML loads", f"{len(html)} bytes")
+        else:
+            fail("Dashboard HTML missing expected content")
+    except Exception as e:
+        fail("Dashboard /", str(e))
+
+    # /health has new fields
+    try:
+        h = http_get("/health")
+        if "dashboard" in h and "version" in h:
+            ok("/health v2 fields", f"version={h.get('version')}, blob={h.get('blob_storage')}")
+        else:
+            fail("/health missing new fields", str(h))
+    except Exception as e:
+        fail("/health v2", str(e))
+
+    # /records returns list
+    try:
+        recs = http_get("/records?limit=10")
+        if isinstance(recs, list):
+            ok(f"/records returns list", f"{len(recs)} records")
+            if recs:
+                r = recs[0]
+                required = {"record_id", "patient_id", "symptoms", "triage", "timestamp"}
+                missing = required - set(r.keys())
+                if not missing:
+                    ok("/records record shape correct")
+                else:
+                    fail("/records record missing fields", str(missing))
+        else:
+            fail("/records should return list", str(type(recs)))
+    except Exception as e:
+        fail("/records", str(e))
+
+    # /records limit param
+    try:
+        recs_1 = http_get("/records?limit=1")
+        if isinstance(recs_1, list) and len(recs_1) <= 1:
+            ok("/records?limit=1 respects limit")
+        else:
+            fail("/records limit param", str(recs_1))
+    except Exception as e:
+        fail("/records limit", str(e))
+
+
+# ===========================================================================
+# Section 6 - Error / Edge Cases
 # ===========================================================================
 def section_edge_cases():
-    print(f"\n{BOLD}{CYAN}[ 5 ] EDGE CASES{RESET}")
+    print(f"\n{BOLD}{CYAN}[ 6 ] EDGE CASES{RESET}")
 
     # Missing required field
     try:
@@ -233,6 +294,7 @@ def main():
     section_health()
     section_sync()
     section_summary()
+    section_dashboard()
     section_edge_cases()
 
     # ---- Summary ----
