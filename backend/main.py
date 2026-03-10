@@ -51,7 +51,7 @@ except ImportError:
     OPENAI_AVAILABLE = False
 
 try:
-    import google.generativeai as genai
+    from google import genai as google_genai
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False
@@ -69,7 +69,7 @@ AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
 OPENAI_API_KEY          = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL            = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 GEMINI_API_KEY          = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL            = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+GEMINI_MODEL            = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-lite")
 
 # ---------------------------------------------------------------------------
 # App
@@ -186,10 +186,9 @@ def _insight_via_gemini(summary: str) -> tuple[Optional[str], Optional[str]]:
     if not GEMINI_AVAILABLE or not GEMINI_API_KEY:
         return None, None
     try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel(GEMINI_MODEL)
+        client = google_genai.Client(api_key=GEMINI_API_KEY)
         prompt = f"{_AI_PROMPT_SYSTEM}\n\nTriage records:\n{summary}"
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
         return response.text.strip(), "Gemini"
     except Exception as e:
         return f"AI insight unavailable: {str(e)}", "Gemini (error)"
@@ -384,11 +383,12 @@ function formatTime(ts) {
       month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
   } catch { return ts; }
 }
+const FETCH_HEADERS = { 'ngrok-skip-browser-warning': 'true' };
 async function refresh() {
   try {
     const [summary, records] = await Promise.all([
-      fetch('/cases-summary').then(r => r.json()),
-      fetch('/records?limit=20').then(r => r.json())
+      fetch('/cases-summary', { headers: FETCH_HEADERS }).then(r => r.json()),
+      fetch('/records?limit=20', { headers: FETCH_HEADERS }).then(r => r.json())
     ]);
     document.getElementById('total').textContent  = summary.total_cases;
     document.getElementById('urgent').textContent = summary.urgent_referrals;

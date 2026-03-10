@@ -9,15 +9,7 @@ import sys
 import urllib.request
 import urllib.error
 
-def load_env(path=".env"):
-    if not os.path.exists(path):
-        return
-    with open(path) as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                key, _, val = line.partition("=")
-                os.environ.setdefault(key.strip(), val.strip())
+from utils import load_env, PASS, FAIL, INFO, WARN
 
 load_env()
 
@@ -29,11 +21,6 @@ AZURE_OPENAI_KEY        = os.getenv("AZURE_OPENAI_KEY") or os.getenv("AZURE_OPEN
 AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
 OPENAI_MODEL            = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 API_VERSION             = "2024-08-01-preview"
-
-PASS = "\033[92m  PASS\033[0m"
-FAIL = "\033[91m  FAIL\033[0m"
-INFO = "\033[94m  INFO\033[0m"
-WARN = "\033[93m  WARN\033[0m"
 
 
 def list_azure_deployments(endpoint, key):

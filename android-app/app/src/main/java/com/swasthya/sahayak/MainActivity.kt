@@ -26,9 +26,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cbFastBreathing: CheckBox
     private lateinit var btnEvaluate: Button
     private lateinit var cardResult: LinearLayout
+    private lateinit var resultHeader: LinearLayout
     private lateinit var tvTriageLevel: TextView
     private lateinit var tvResult: TextView
     private lateinit var btnNewPatient: Button
+    private lateinit var tvVoiceStatus: TextView
+    private lateinit var tvPatientId: TextView
+    private lateinit var tvSyncStatus: TextView
+    private var currentPatientId: String = ""
 
     // ── Voice input launcher ──────────────────────────────────────────────
     private val speechLauncher = registerForActivityResult(
@@ -61,9 +66,14 @@ class MainActivity : AppCompatActivity() {
         cbFastBreathing = findViewById(R.id.cbFastBreathing)
         btnEvaluate     = findViewById(R.id.btnEvaluate)
         cardResult      = findViewById(R.id.cardResult)
+        resultHeader    = findViewById(R.id.resultHeader)
         tvTriageLevel   = findViewById(R.id.tvTriageLevel)
         tvResult        = findViewById(R.id.tvResult)
         btnNewPatient   = findViewById(R.id.btnNewPatient)
+        tvVoiceStatus   = findViewById(R.id.tvVoiceStatus)
+        tvPatientId     = findViewById(R.id.tvPatientId)
+        tvSyncStatus    = findViewById(R.id.tvSyncStatus)
+        newPatient()
 
         btnVoice.setOnClickListener {
             if (!SpeechRecognizer.isRecognitionAvailable(this)) {
@@ -115,9 +125,17 @@ class MainActivity : AppCompatActivity() {
         if ("breath" in lower || "breathing" in lower || "saans" in lower ||
             "laboured" in lower || "difficult" in lower
         ) cbFastBreathing.isChecked = true
+
+        tvVoiceStatus.text = "✓ Heard: \"$text\""
+        tvVoiceStatus.setTextColor(getColor(R.color.colorPrimary))
     }
 
     // ── Triage evaluation ─────────────────────────────────────────────────
+    private fun newPatient() {
+        currentPatientId = UUID.randomUUID().toString()
+        tvPatientId.text = currentPatientId.take(8).uppercase()
+    }
+
     private fun runTriage() {
         val symptoms = mapOf(
             "age_under_5"    to cbAgeUnder5.isChecked,
@@ -130,11 +148,12 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val record = VisitRecord(
-                patientId    = UUID.randomUUID().toString(),
+                patientId    = currentPatientId,
                 symptomsJson = JSONObject(symptoms as Map<*, *>).toString(),
                 triage       = result.triage,
             )
             VisitDatabase.get(this@MainActivity).visitDao().insert(record)
+            tvSyncStatus.text = "● SYNCING"
             scheduleSyncIfNeeded()
         }
     }
@@ -146,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             else              -> Pair(R.drawable.bg_homecare,  "✅  HOME CARE")
         }
 
-        cardResult.setBackgroundResource(bgDrawable)
+        resultHeader.setBackgroundResource(bgDrawable)
         tvTriageLevel.text = emoji
         tvResult.text = result.description
 
@@ -172,6 +191,10 @@ class MainActivity : AppCompatActivity() {
         btnEvaluate.visibility   = View.VISIBLE
         tvTriageLevel.text       = ""
         tvResult.text            = ""
+        tvVoiceStatus.text       = "Tap mic and say symptoms in Hindi or English"
+        tvVoiceStatus.setTextColor(getColor(R.color.colorTextHint))
+        tvSyncStatus.text        = "● OFFLINE"
+        newPatient()
     }
 
     // ── Background sync ───────────────────────────────────────────────────

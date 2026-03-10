@@ -22,9 +22,7 @@ set ACA_ENV=swasthya-env
 set APP_NAME=swasthya-backend
 
 REM Load .env values
-for /f "usebackq tokens=1,* delims==" %%a in (".env") do (
-    if not "%%a"=="" if not "%%a:~0,1%"=="#" set "%%a=%%b"
-)
+call "%~dp0load_env.bat"
 
 echo.
 echo ============================================================

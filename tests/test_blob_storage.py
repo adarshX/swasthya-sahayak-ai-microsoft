@@ -9,25 +9,12 @@ import os
 import sys
 import uuid
 
-# Load .env manually (no python-dotenv dependency)
-def load_env(path=".env"):
-    if not os.path.exists(path):
-        return
-    with open(path) as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                key, _, val = line.partition("=")
-                os.environ.setdefault(key.strip(), val.strip())
+from utils import load_env, PASS, FAIL, INFO
 
 load_env()
 
 CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING", "")
 CONTAINER_NAME    = os.getenv("AZURE_BLOB_CONTAINER", "visit-records")
-
-PASS = "\033[92m  PASS\033[0m"
-FAIL = "\033[91m  FAIL\033[0m"
-INFO = "\033[94m  INFO\033[0m"
 
 def check(label, fn):
     try:

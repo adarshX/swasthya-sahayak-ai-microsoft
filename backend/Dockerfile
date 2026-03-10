@@ -2,9 +2,8 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install all dependencies (base + azure + ai packages)
-COPY requirements.txt requirements-azure.txt ./
-RUN pip install --no-cache-dir -r requirements.txt -r requirements-azure.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
 

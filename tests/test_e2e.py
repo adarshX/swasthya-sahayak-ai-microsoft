@@ -19,14 +19,11 @@ import traceback
 import urllib.request
 import urllib.error
 
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
+from utils import load_env, RESET, GREEN, RED, YELLOW, BOLD, CYAN
 
-RESET  = "\033[0m"
-GREEN  = "\033[92m"
-RED    = "\033[91m"
-YELLOW = "\033[93m"
-BOLD   = "\033[1m"
-CYAN   = "\033[96m"
+load_env()
+
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080")
 
 results: list[tuple[str, bool, str]] = []
 

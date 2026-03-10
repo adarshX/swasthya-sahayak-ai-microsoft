@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 REM Swasthya Sahayak AI - Backend Startup Script (Windows)
 REM Runs the FastAPI backend on port 8080
 
@@ -13,16 +14,10 @@ if not exist "..\venv\Scripts\activate.bat" (
 call ..\venv\Scripts\activate.bat
 
 REM Install dependencies
-pip install -r requirements.txt -r requirements-azure.txt -q
+pip install -r requirements.txt -q
 
-REM Load .env from parent directory
-set DOTENV_PATH=%~dp0.env
-if exist "%DOTENV_PATH%" (
-    for /f "usebackq tokens=1,* delims==" %%a in ("%DOTENV_PATH%") do (
-        if not "%%a"=="" if not "%%a:~0,1%"=="#" set "%%a=%%b"
-    )
-    echo Loaded .env
-)
+REM Load .env from project root
+call "%~dp0load_env.bat"
 
 echo.
 echo Starting Swasthya Sahayak backend on http://localhost:8080

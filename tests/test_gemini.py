@@ -18,21 +18,10 @@ import json
 import os
 import sys
 import time
-from pathlib import Path
 
-# Load .env from project root
-try:
-    from dotenv import load_dotenv
-    load_dotenv(Path(__file__).parent.parent / ".env")
-except ImportError:
-    pass
+from utils import load_env, RESET, GREEN, RED, YELLOW, BOLD, CYAN
 
-RESET  = "\033[0m"
-GREEN  = "\033[92m"
-RED    = "\033[91m"
-YELLOW = "\033[93m"
-BOLD   = "\033[1m"
-CYAN   = "\033[96m"
+load_env()
 
 results: list[tuple[str, bool, str]] = []
 
@@ -63,32 +52,41 @@ def check_prerequisites():
         fail("GEMINI_API_KEY", "Not set in .env — get a free key at https://aistudio.google.com/app/apikey")
         print(f"\n  {YELLOW}Add to your .env file:{RESET}")
         print("    GEMINI_API_KEY=your-key-here")
-        print("    GEMINI_MODEL=gemini-1.5-flash  (optional, this is the default)\n")
+        print("    GEMINI_MODEL=gemini-2.0-flash-lite  (optional, this is the default)\n")
         return False, None, None
     ok("GEMINI_API_KEY set", f"{GEMINI_API_KEY[:8]}…")
 
     try:
-        import google.generativeai as genai
-        ok("google-generativeai installed")
+        from google import genai as _genai  # noqa: F401
+        ok("google-genai installed")
     except ImportError:
-        fail("google-generativeai not installed", "pip install google-generativeai>=0.7.0")
+        fail("google-genai not installed", "pip install google-genai>=1.0.0")
         return False, None, None
 
-    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-lite")
     ok("Gemini model", GEMINI_MODEL)
 
     return True, GEMINI_API_KEY, GEMINI_MODEL
 
 
 # ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+def _make_client(api_key: str):
+    from google import genai
+    return genai.Client(api_key=api_key)
+
+
+# ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
-def test_basic_ping(genai, api_key, model_name):
+def test_basic_ping(client, model_name):
     print(f"\n{BOLD}{CYAN}[ 1 ] BASIC CONNECTIVITY{RESET}")
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content("Say 'Swasthya Sahayak OK' and nothing else.")
+        response = client.models.generate_content(
+            model=model_name,
+            contents="Say 'Swasthya Sahayak OK' and nothing else."
+        )
         text = response.text.strip()
         if "Swasthya" in text or "OK" in text or len(text) > 0:
             ok("Basic API call", text[:60])
@@ -98,7 +96,7 @@ def test_basic_ping(genai, api_key, model_name):
         fail("Basic API call", str(e))
 
 
-def test_healthcare_insight(genai, api_key, model_name):
+def test_healthcare_insight(client, model_name):
     print(f"\n{BOLD}{CYAN}[ 2 ] HEALTHCARE INSIGHT QUALITY{RESET}")
 
     sample_records = [
@@ -118,10 +116,8 @@ def test_healthcare_insight(genai, api_key, model_name):
     )
 
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model_name)
         t0 = time.time()
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model=model_name, contents=prompt)
         elapsed = time.time() - t0
         text = response.text.strip()
 
@@ -135,18 +131,15 @@ def test_healthcare_insight(genai, api_key, model_name):
         fail("Healthcare insight", str(e))
 
 
-def test_safety_filter(genai, api_key, model_name):
+def test_safety_filter(client, model_name):
     """Verify Gemini doesn't hallucinate a diagnosis (it should give generic advice)."""
     print(f"\n{BOLD}{CYAN}[ 3 ] SAFETY — NO DIRECT DIAGNOSIS{RESET}")
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content(
-            "A child has fever and fast breathing. Diagnose the specific disease."
+        response = client.models.generate_content(
+            model=model_name,
+            contents="A child has fever and fast breathing. Diagnose the specific disease."
         )
         text = response.text.strip().lower()
-        # Gemini should give advice/referral, not a definitive medical diagnosis
-        # We just check it responds and doesn't crash
         if text:
             ok("Gemini responds to medical query (check output manually)")
             print(f"  {YELLOW}Note: verify response is advisory, not definitive diagnosis{RESET}")
@@ -157,15 +150,13 @@ def test_safety_filter(genai, api_key, model_name):
         fail("Safety filter test", str(e))
 
 
-def test_latency(genai, api_key, model_name):
+def test_latency(client, model_name):
     print(f"\n{BOLD}{CYAN}[ 4 ] LATENCY CHECK{RESET}")
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model_name)
         times = []
-        for i in range(2):
+        for _ in range(2):
             t0 = time.time()
-            model.generate_content("One word: Namaste")
+            client.models.generate_content(model=model_name, contents="One word: Namaste")
             times.append(time.time() - t0)
         avg = sum(times) / len(times)
         if avg < 10:
@@ -189,12 +180,11 @@ def main():
     if not ok_flag:
         sys.exit(1)
 
-    import google.generativeai as genai
-
-    test_basic_ping(genai, api_key, model_name)
-    test_healthcare_insight(genai, api_key, model_name)
-    test_safety_filter(genai, api_key, model_name)
-    test_latency(genai, api_key, model_name)
+    client = _make_client(api_key)
+    test_basic_ping(client, model_name)
+    test_healthcare_insight(client, model_name)
+    test_safety_filter(client, model_name)
+    test_latency(client, model_name)
 
     # Summary
     total  = len(results)
