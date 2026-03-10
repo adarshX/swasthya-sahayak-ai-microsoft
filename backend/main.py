@@ -8,9 +8,11 @@ Endpoints:
   GET  /records     -> Recent visit records (for dashboard table)
   GET  /cases-summary -> Aggregate stats + AI insight
 
-AI insight supports two modes (set one in .env):
-  - Direct OpenAI API:  set OPENAI_API_KEY
-  - Azure OpenAI:       set AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_KEY
+AI insight — automatic fallback chain (set keys in .env):
+  1. Azure OpenAI  (AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_KEY)
+  2. Direct OpenAI (OPENAI_API_KEY)
+  3. Google Gemini (GEMINI_API_KEY)  ← fallback when Azure unavailable
+  4. None          → returns null, dashboard shows placeholder
 """
 
 import json
@@ -20,19 +22,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-# Auto-load .env from parent directory (works whether run via uvicorn or start_backend scripts)
+# Auto-load .env from project root
 try:
     from dotenv import load_dotenv
     _env_file = Path(__file__).parent.parent / ".env"
     if _env_file.exists():
         load_dotenv(_env_file)
 except ImportError:
-    pass  # python-dotenv not installed, rely on env vars set externally
+    pass
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
+# ---------------------------------------------------------------------------
+# Optional dependency detection
+# ---------------------------------------------------------------------------
 try:
     from azure.storage.blob import BlobServiceClient
     AZURE_BLOB_AVAILABLE = True
@@ -45,17 +50,26 @@ try:
 except ImportError:
     OPENAI_AVAILABLE = False
 
+try:
+    import google.generativeai as genai
+    GEMINI_AVAILABLE = True
+except ImportError:
+    GEMINI_AVAILABLE = False
+
 # ---------------------------------------------------------------------------
-# Config from environment (loaded above via dotenv)
+# Config from environment
 # ---------------------------------------------------------------------------
 AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING", "")
 AZURE_BLOB_CONTAINER            = os.getenv("AZURE_BLOB_CONTAINER", "visit-records")
 
-OPENAI_API_KEY          = os.getenv("OPENAI_API_KEY", "")
+# AI providers — fallback order: Azure OpenAI → direct OpenAI → Gemini
 AZURE_OPENAI_ENDPOINT   = os.getenv("AZURE_OPENAI_ENDPOINT", "")
 AZURE_OPENAI_KEY        = os.getenv("AZURE_OPENAI_KEY", "")
-OPENAI_MODEL            = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
+OPENAI_API_KEY          = os.getenv("OPENAI_API_KEY", "")
+OPENAI_MODEL            = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+GEMINI_API_KEY          = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL            = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
 # ---------------------------------------------------------------------------
 # App
@@ -84,6 +98,7 @@ class CasesSummaryResponse(BaseModel):
     phc_visits: int
     home_care: int
     ai_insight: Optional[str] = None
+    ai_provider: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -122,48 +137,92 @@ def _load_all_records() -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# AI insight helper
+# AI insight — fallback chain: Azure OpenAI → OpenAI → Gemini
 # ---------------------------------------------------------------------------
-def _make_openai_client():
+_AI_PROMPT_SYSTEM = (
+    "You are a public health analyst supporting ASHA/ANM field workers in rural India. "
+    "Analyze these triage records and provide a 2-sentence insight about disease patterns "
+    "or alert trends. Be concise and actionable for a PHC supervisor."
+)
+
+def _insight_via_openai(summary: str) -> tuple[Optional[str], Optional[str]]:
+    """Try Azure OpenAI first, then direct OpenAI. Returns (text, provider_label)."""
     if not OPENAI_AVAILABLE:
         return None, None
-    if OPENAI_API_KEY:
-        return OpenAI(api_key=OPENAI_API_KEY), OPENAI_MODEL
+
+    clients_to_try = []
     if AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_KEY:
-        return AzureOpenAI(
-            azure_endpoint=AZURE_OPENAI_ENDPOINT,
-            api_key=AZURE_OPENAI_KEY,
-            api_version="2024-02-01",
-        ), AZURE_OPENAI_DEPLOYMENT
+        clients_to_try.append((
+            AzureOpenAI(
+                azure_endpoint=AZURE_OPENAI_ENDPOINT,
+                api_key=AZURE_OPENAI_KEY,
+                api_version="2024-02-01",
+            ),
+            AZURE_OPENAI_DEPLOYMENT,
+            "Azure OpenAI",
+        ))
+    if OPENAI_API_KEY:
+        clients_to_try.append((OpenAI(api_key=OPENAI_API_KEY), OPENAI_MODEL, "OpenAI"))
+
+    for client, model, label in clients_to_try:
+        try:
+            resp = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": _AI_PROMPT_SYSTEM},
+                    {"role": "user", "content": summary},
+                ],
+                max_tokens=150,
+            )
+            return resp.choices[0].message.content.strip(), label
+        except Exception:
+            continue  # try next provider
+
     return None, None
 
-def _generate_ai_insight(records: list[dict]) -> Optional[str]:
-    client, model = _make_openai_client()
-    if client is None:
-        return None
+
+def _insight_via_gemini(summary: str) -> tuple[Optional[str], Optional[str]]:
+    """Gemini fallback — used when both Azure OpenAI and direct OpenAI fail."""
+    if not GEMINI_AVAILABLE or not GEMINI_API_KEY:
+        return None, None
     try:
-        summary = json.dumps(
-            [{"triage": r["triage"], "symptoms": r["symptoms"]} for r in records[-20:]],
-            indent=2,
-        )
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a public health analyst supporting ASHA/ANM field workers in rural India. "
-                        "Analyze these triage records and provide a 2-sentence insight about disease patterns "
-                        "or alert trends. Be concise and actionable for a PHC supervisor."
-                    ),
-                },
-                {"role": "user", "content": summary},
-            ],
-            max_tokens=150,
-        )
-        return response.choices[0].message.content.strip()
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel(GEMINI_MODEL)
+        prompt = f"{_AI_PROMPT_SYSTEM}\n\nTriage records:\n{summary}"
+        response = model.generate_content(prompt)
+        return response.text.strip(), "Gemini"
     except Exception as e:
-        return f"AI insight unavailable: {str(e)}"
+        return f"AI insight unavailable: {str(e)}", "Gemini (error)"
+
+
+def _generate_ai_insight(records: list[dict]) -> tuple[Optional[str], Optional[str]]:
+    """Returns (insight_text, provider_label). Provider is for /health only."""
+    if not records:
+        return None, None
+
+    summary = json.dumps(
+        [{"triage": r["triage"], "symptoms": r["symptoms"]} for r in records[-20:]],
+        indent=2,
+    )
+
+    text, provider = _insight_via_openai(summary)
+    if text:
+        return text, provider
+
+    text, provider = _insight_via_gemini(summary)
+    return text, provider
+
+
+def _active_ai_provider() -> str:
+    """Returns which AI provider is currently configured."""
+    if OPENAI_AVAILABLE:
+        if AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_KEY:
+            return f"Azure OpenAI ({AZURE_OPENAI_DEPLOYMENT})"
+        if OPENAI_API_KEY:
+            return f"OpenAI ({OPENAI_MODEL})"
+    if GEMINI_AVAILABLE and GEMINI_API_KEY:
+        return f"Gemini ({GEMINI_MODEL}) [fallback]"
+    return "not configured"
 
 
 # ---------------------------------------------------------------------------
@@ -196,7 +255,6 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
     .container { padding: 24px 28px; max-width: 1100px; margin: 0 auto; }
 
-    /* Stat cards */
     .stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
     .card {
       background: white; border-radius: 14px; padding: 20px 24px;
@@ -213,7 +271,6 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     .card.home   { border-left: 5px solid #2E7D32; }
     .card.home   .value { color: #2E7D32; }
 
-    /* AI Insight box */
     .insight {
       background: #1565C0; color: white;
       border-radius: 14px; padding: 20px 24px; margin-bottom: 24px;
@@ -222,9 +279,9 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     }
     .insight .icon { font-size: 28px; flex-shrink: 0; }
     .insight .text { font-size: 15px; line-height: 1.6; }
-    .insight .text strong { display: block; font-size: 11px; letter-spacing: 0.08em; opacity: 0.7; margin-bottom: 4px; }
+    .insight .text strong { display: block; font-size: 11px; letter-spacing: 0.08em;
+      opacity: 0.7; margin-bottom: 4px; }
 
-    /* Records table */
     .table-wrap {
       background: white; border-radius: 14px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
@@ -243,9 +300,12 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #F8F9FF; }
 
-    .badge-urgent { background: #FFEBEE; color: #C62828; border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
-    .badge-phc    { background: #FFF3E0; color: #E65100; border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
-    .badge-home   { background: #E8F5E9; color: #2E7D32; border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+    .badge-urgent { background: #FFEBEE; color: #C62828; border-radius: 20px;
+      padding: 3px 10px; font-size: 12px; font-weight: 700; }
+    .badge-phc    { background: #FFF3E0; color: #E65100; border-radius: 20px;
+      padding: 3px 10px; font-size: 12px; font-weight: 700; }
+    .badge-home   { background: #E8F5E9; color: #2E7D32; border-radius: 20px;
+      padding: 3px 10px; font-size: 12px; font-weight: 700; }
 
     .symptom-tag {
       display: inline-block; background: #EEF2FF; color: #1565C0;
@@ -267,7 +327,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 </header>
 
 <div class="container">
-  <div class="stats" id="stats">
+  <div class="stats">
     <div class="card total"><div class="label">TOTAL VISITS</div><div class="value" id="total">—</div></div>
     <div class="card urgent"><div class="label">🚨 URGENT REFERRAL</div><div class="value" id="urgent">—</div></div>
     <div class="card phc"><div class="label">⚠️ PHC VISIT</div><div class="value" id="phc">—</div></div>
@@ -276,7 +336,10 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
   <div class="insight" id="insight-box">
     <div class="icon">🤖</div>
-    <div class="text"><strong>AI PATTERN INSIGHT (Azure OpenAI)</strong><span id="insight-text">Loading…</span></div>
+    <div class="text">
+      <strong id="ai-provider-label">AI PATTERN INSIGHT</strong>
+      <span id="insight-text">Loading…</span>
+    </div>
   </div>
 
   <div class="table-wrap">
@@ -287,7 +350,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
     <table>
       <thead>
         <tr>
-          <th>TIME</th>
+          <th>TIME (IST)</th>
           <th>PATIENT ID</th>
           <th>TRIAGE DECISION</th>
           <th>SYMPTOMS REPORTED</th>
@@ -307,43 +370,35 @@ function badgeClass(triage) {
   if (triage === 'PHC Visit') return 'badge-phc';
   return 'badge-home';
 }
-
 function symptomTags(symptoms) {
-  const map = {
-    age_under_5: '👶 Child <5yrs',
-    fever: '🌡️ Fever',
-    fast_breathing: '💨 Fast Breathing'
-  };
+  const map = { age_under_5: '👶 Child <5', fever: '🌡️ Fever', fast_breathing: '💨 Fast Breath' };
   return Object.entries(symptoms)
     .filter(([,v]) => v === true)
     .map(([k]) => `<span class="symptom-tag">${map[k] || k}</span>`)
-    .join('') || '<span style="color:#BDBDBD">No symptoms</span>';
+    .join('') || '<span style="color:#BDBDBD">None checked</span>';
 }
-
 function formatTime(ts) {
   if (!ts) return '—';
   try {
-    const d = new Date(ts);
-    return d.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true,
-      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return new Date(ts).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata',
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
   } catch { return ts; }
 }
-
 async function refresh() {
   try {
     const [summary, records] = await Promise.all([
       fetch('/cases-summary').then(r => r.json()),
       fetch('/records?limit=20').then(r => r.json())
     ]);
-
     document.getElementById('total').textContent  = summary.total_cases;
     document.getElementById('urgent').textContent = summary.urgent_referrals;
     document.getElementById('phc').textContent    = summary.phc_visits;
     document.getElementById('home').textContent   = summary.home_care;
 
-    const insight = summary.ai_insight;
+    const provider = summary.ai_provider || 'AI';
+    document.getElementById('ai-provider-label').textContent = `${provider} PATTERN INSIGHT`;
     document.getElementById('insight-text').textContent =
-      insight || 'No AI insight yet — add more records and configure Azure OpenAI.';
+      summary.ai_insight || 'No insight yet — sync more records or configure an AI key in .env';
 
     const tbody = document.getElementById('records-body');
     if (!records.length) {
@@ -357,14 +412,12 @@ async function refresh() {
           <td>${symptomTags(r.symptoms || {})}</td>
         </tr>`).join('');
     }
-
     document.getElementById('last-updated').textContent =
-      'Last updated: ' + new Date().toLocaleTimeString('en-IN');
+      'Updated ' + new Date().toLocaleTimeString('en-IN');
   } catch(e) {
     document.getElementById('insight-text').textContent = 'Connection error: ' + e.message;
   }
 }
-
 refresh();
 setInterval(refresh, 20000);
 </script>
@@ -377,19 +430,17 @@ setInterval(refresh, 20000);
 # ---------------------------------------------------------------------------
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
-    """Supervisor dashboard — open in browser to see real-time case monitoring."""
     return DASHBOARD_HTML
 
 
 @app.get("/health")
 def health():
     blob_ok = _blob_client() is not None
-    _, model = _make_openai_client()
     return {
         "status": "ok",
         "version": "1.0.0",
         "blob_storage": "azure-blob" if blob_ok else "in-memory",
-        "ai_model": model or "not configured",
+        "ai_provider": _active_ai_provider(),
         "dashboard": "http://localhost:8080/",
     }
 
@@ -413,26 +464,24 @@ def sync_record(body: SyncRecordRequest):
 
 @app.get("/records")
 def records(limit: int = 50):
-    """Returns recent visit records (newest last). Used by the supervisor dashboard."""
+    """Returns recent visit records sorted by timestamp. Used by the dashboard."""
     all_records = _load_all_records()
-    # Sort by timestamp descending, return last `limit`
-    sorted_records = sorted(
-        all_records,
-        key=lambda r: r.get("timestamp", ""),
-    )
+    sorted_records = sorted(all_records, key=lambda r: r.get("timestamp", ""))
     return sorted_records[-limit:]
 
 
 @app.get("/cases-summary", response_model=CasesSummaryResponse)
 def cases_summary():
-    records = _load_all_records()
-    urgent = sum(1 for r in records if r.get("triage") == "Urgent Referral")
-    phc    = sum(1 for r in records if r.get("triage") == "PHC Visit")
-    home   = sum(1 for r in records if r.get("triage") == "Home Care")
+    all_records = _load_all_records()
+    urgent = sum(1 for r in all_records if r.get("triage") == "Urgent Referral")
+    phc    = sum(1 for r in all_records if r.get("triage") == "PHC Visit")
+    home   = sum(1 for r in all_records if r.get("triage") == "Home Care")
+    insight, provider = _generate_ai_insight(all_records)
     return CasesSummaryResponse(
-        total_cases=len(records),
+        total_cases=len(all_records),
         urgent_referrals=urgent,
         phc_visits=phc,
         home_care=home,
-        ai_insight=_generate_ai_insight(records) if records else None,
+        ai_insight=insight,
+        ai_provider=provider,
     )
