@@ -1,8 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
 }
+
+// Load local.properties at script top level (avoids DSL scope issues)
+val localProps = Properties()
+val localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) localProps.load(localPropsFile.inputStream())
 
 android {
     namespace = "com.swasthya.sahayak"
@@ -15,17 +22,13 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        // Read from local.properties (never committed to git)
-        val localProps = java.util.Properties().also { props ->
-            val f = rootProject.file("local.properties")
-            if (f.exists()) props.load(f.inputStream())
-        }
-        buildConfigField("String", "BACKEND_URL",
-            "\"${localProps.getProperty("backendUrl", "http://10.0.2.2:8080")}\"")
-        buildConfigField("String", "SPEECH_KEY",
-            "\"${localProps.getProperty("AZURE_SPEECH_KEY", "")}\"")
-        buildConfigField("String", "SPEECH_REGION",
-            "\"${localProps.getProperty("AZURE_SPEECH_REGION", "eastasia")}\"")
+        val backendUrl = localProps.getProperty("backendUrl", "http://10.0.2.2:8080")
+        val speechKey = localProps.getProperty("AZURE_SPEECH_KEY", "")
+        val speechRegion = localProps.getProperty("AZURE_SPEECH_REGION", "eastasia")
+
+        buildConfigField("String", "BACKEND_URL", "\"$backendUrl\"")
+        buildConfigField("String", "SPEECH_KEY", "\"$speechKey\"")
+        buildConfigField("String", "SPEECH_REGION", "\"$speechRegion\"")
     }
 
     buildFeatures {
