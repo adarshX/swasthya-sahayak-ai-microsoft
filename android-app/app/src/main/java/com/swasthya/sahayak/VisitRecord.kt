@@ -9,6 +9,8 @@ data class VisitRecord(
     val patientId: String,
     val symptomsJson: String,   // serialised Map<String,Boolean>
     val triage: String,
+    val confidence: Float = 0f,
+    val matchedRule: String = "",
     val timestamp: Long = System.currentTimeMillis(),
     val synced: Boolean = false
 )

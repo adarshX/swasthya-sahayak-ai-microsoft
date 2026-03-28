@@ -1,0 +1,1096 @@
+{
+  "version": "1.0",
+  "compiled_at": "2026-03-25T16:09:02.894340",
+  "conditions": [
+    {
+      "id": "anemia_screening",
+      "condition": "anemia_screening",
+      "version": "NHM-AMB-2023",
+      "patient_age_max_months": 0,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "pallor",
+          "required": true,
+          "weight": 2.5
+        },
+        {
+          "symptom": "weakness",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "breathlessness",
+          "required": false,
+          "weight": 2.0
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 5.0,
+        "phc_visit": 2.5,
+        "home_care": 0.0
+      },
+      "rationale": "Pallor with weakness or breathlessness may indicate anemia requiring Hb test and iron supplementation per NHM Anemia Mukt Bharat",
+      "follow_up_questions": [
+        {
+          "id": "pallor_location",
+          "trigger_symptom": "pallor",
+          "type": "severity",
+          "question_en": "Where is the pallor visible? Inner eyelid / Nails / Palms / Tongue",
+          "question_hi": "\u092a\u0940\u0932\u093e\u092a\u0928 \u0915\u0939\u093e\u0901 \u0926\u093f\u0916 \u0930\u0939\u093e \u0939\u0948? \u092a\u0932\u0915 \u0915\u0947 \u0905\u0902\u0926\u0930 / \u0928\u093e\u0916\u0942\u0928 / \u0939\u0925\u0947\u0932\u0940 / \u091c\u0940\u092d",
+          "options": [
+            {
+              "label": "One area only",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "Multiple areas (eyelid + nails + palms)",
+              "weight_boost": 1.0
+            }
+          ]
+        },
+        {
+          "id": "breathlessness_severity",
+          "trigger_symptom": "breathlessness",
+          "type": "severity",
+          "question_en": "Does breathlessness happen at rest or only during work?",
+          "question_hi": "\u0938\u093e\u0902\u0938 \u092b\u0942\u0932\u0928\u093e \u0906\u0930\u093e\u092e \u092e\u0947\u0902 \u0939\u094b\u0924\u093e \u0939\u0948 \u092f\u093e \u0915\u093e\u092e \u0915\u0930\u0924\u0947 \u0935\u0915\u094d\u0924?",
+          "options": [
+            {
+              "label": "Only during work",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "At rest also",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "diet_history",
+          "type": "yes_no",
+          "question_en": "Is the patient eating green vegetables and iron-rich food regularly?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u092e\u0930\u0940\u091c\u093c \u0939\u0930\u0940 \u0938\u092c\u094d\u091c\u093c\u0940 \u0914\u0930 \u0932\u094c\u0939 \u0935\u093e\u0932\u093e \u0916\u093e\u0928\u093e \u0916\u093e\u0924\u093e \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "No - poor diet",
+              "weight_boost": 0.5
+            }
+          ]
+        },
+        {
+          "id": "visual_check",
+          "type": "visual",
+          "question_en": "Can you take a photo of inner eyelid, nails, or palms for anemia check?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0906\u092a \u092a\u0932\u0915 \u0915\u0947 \u0905\u0902\u0926\u0930, \u0928\u093e\u0916\u0942\u0928 \u092f\u093e \u0939\u0925\u0947\u0932\u0940 \u0915\u0940 \u092b\u094b\u091f\u094b \u0932\u0947 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 0.0,
+              "triggers_camera": true
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bronchitis",
+      "condition": "bronchitis",
+      "version": "doctor-20260324",
+      "patient_age_max_months": 0,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "severe_cough",
+          "required": true,
+          "weight": 2
+        },
+        {
+          "symptom": "breathing_issues",
+          "required": true,
+          "weight": 2
+        },
+        {
+          "symptom": "fever",
+          "required": false,
+          "weight": 0.5
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 4.5,
+        "phc_visit": 2.0,
+        "home_care": 0.0
+      },
+      "rationale": "severe cough and unable to breathe with multiple attacks of this ",
+      "follow_up_questions": [
+        {
+          "id": "cough_duration",
+          "trigger_symptom": "severe_cough",
+          "type": "duration",
+          "question_en": "How many days has the cough lasted?",
+          "question_hi": "\u0916\u093e\u0902\u0938\u0940 \u0915\u093f\u0924\u0928\u0947 \u0926\u093f\u0928 \u0938\u0947 \u0939\u0948?",
+          "options": [
+            {
+              "label": "1-3 days",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "4-7 days",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "More than 1 week",
+              "weight_boost": 1.0
+            }
+          ]
+        },
+        {
+          "id": "breathing_when",
+          "trigger_symptom": "breathing_issues",
+          "type": "severity",
+          "question_en": "When does breathing difficulty occur? During coughing / At rest / While sleeping",
+          "question_hi": "\u0938\u093e\u0902\u0938 \u0915\u0940 \u0924\u0915\u0932\u0940\u092b \u0915\u092c \u0939\u094b\u0924\u0940 \u0939\u0948? \u0916\u093e\u0902\u0938\u0924\u0947 \u0935\u0915\u094d\u0924 / \u0906\u0930\u093e\u092e \u092e\u0947\u0902 / \u0938\u094b\u0924\u0947 \u0935\u0915\u094d\u0924",
+          "options": [
+            {
+              "label": "Only during coughing",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "At rest",
+              "weight_boost": 1.0
+            },
+            {
+              "label": "While sleeping (wakes up)",
+              "weight_boost": 1.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "general_danger_signs",
+      "condition": "general_danger_signs",
+      "version": "WHO-IMNCI-2023",
+      "patient_age_max_months": 60,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "convulsions",
+          "required": false,
+          "weight": 4.0
+        },
+        {
+          "symptom": "unable_to_feed",
+          "required": false,
+          "weight": 3.5
+        },
+        {
+          "symptom": "vomiting",
+          "required": false,
+          "weight": 1.5
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 3.0,
+        "phc_visit": 1.5,
+        "home_care": 0.0
+      },
+      "rationale": "General danger signs in under-5 such as convulsions or inability to feed require immediate referral per WHO-IMNCI",
+      "follow_up_questions": [
+        {
+          "id": "convulsion_duration",
+          "trigger_symptom": "convulsions",
+          "type": "duration",
+          "question_en": "How long did the convulsion/seizure last?",
+          "question_hi": "\u0926\u094c\u0930\u093e \u0915\u093f\u0924\u0928\u0940 \u0926\u0947\u0930 \u0924\u0915 \u091a\u0932\u093e?",
+          "options": [
+            {
+              "label": "Less than 5 minutes",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "5-15 minutes",
+              "weight_boost": 1.0
+            },
+            {
+              "label": "More than 15 minutes",
+              "weight_boost": 2.0
+            }
+          ]
+        },
+        {
+          "id": "feeding_attempt",
+          "trigger_symptom": "unable_to_feed",
+          "type": "severity",
+          "question_en": "Is the child refusing all food/milk or just eating less?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u092c\u091a\u094d\u091a\u093e \u0938\u092c \u0916\u093e\u0928\u093e/\u0926\u0942\u0927 \u092e\u0928\u093e \u0915\u0930 \u0930\u0939\u093e \u0939\u0948 \u092f\u093e \u092c\u0938 \u0915\u092e \u0916\u093e \u0930\u0939\u093e \u0939\u0948?",
+          "options": [
+            {
+              "label": "Eating less than usual",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "Refusing everything",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "consciousness",
+          "type": "yes_no",
+          "question_en": "Is the child conscious and responsive? Can they open eyes and respond?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u092c\u091a\u094d\u091a\u093e \u0939\u094b\u0936 \u092e\u0947\u0902 \u0939\u0948? \u0906\u0901\u0916\u0947\u0902 \u0916\u094b\u0932 \u0930\u0939\u093e \u0939\u0948 \u0914\u0930 \u092a\u094d\u0930\u0924\u093f\u0915\u094d\u0930\u093f\u092f\u093e \u0915\u0930 \u0930\u0939\u093e \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes - conscious",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "No - lethargic/unconscious",
+              "weight_boost": 2.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "childhood_diarrhea",
+      "condition": "childhood_diarrhea",
+      "version": "WHO-IMNCI-2023",
+      "patient_age_max_months": 60,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "diarrhea",
+          "required": true,
+          "weight": 2.5
+        },
+        {
+          "symptom": "vomiting",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "fever",
+          "required": false,
+          "weight": 1.0
+        }
+      ],
+      "risk_modifiers": [
+        {
+          "flag": "severe_malnutrition",
+          "multiplier": 1.5
+        }
+      ],
+      "thresholds": {
+        "urgent_referral": 4.0,
+        "phc_visit": 2.0,
+        "home_care": 0.0
+      },
+      "rationale": "Diarrhea with vomiting/fever in under-5 requires urgent rehydration per WHO-IMNCI",
+      "follow_up_questions": [
+        {
+          "id": "diarrhea_duration",
+          "trigger_symptom": "diarrhea",
+          "type": "duration",
+          "question_en": "How many days has the diarrhea lasted?",
+          "question_hi": "\u0926\u0938\u094d\u0924 \u0915\u093f\u0924\u0928\u0947 \u0926\u093f\u0928 \u0938\u0947 \u0939\u0948?",
+          "options": [
+            {
+              "label": "1-2 days",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "3-5 days",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "More than 5 days",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "stool_appearance",
+          "trigger_symptom": "diarrhea",
+          "type": "color",
+          "question_en": "What does the stool look like? Watery / Mucus / Bloody / Rice-water",
+          "question_hi": "\u092a\u0949\u091f\u0940 \u0915\u0948\u0938\u0940 \u0926\u093f\u0916\u0924\u0940 \u0939\u0948? \u092a\u093e\u0928\u0940 \u091c\u0948\u0938\u0940 / \u091a\u093f\u092a\u091a\u093f\u092a\u0940 / \u0916\u0942\u0928 \u0935\u093e\u0932\u0940 / \u091a\u093e\u0935\u0932 \u0915\u0947 \u092a\u093e\u0928\u0940 \u091c\u0948\u0938\u0940",
+          "options": [
+            {
+              "label": "Watery",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Mucus",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Bloody",
+              "weight_boost": 2.0
+            },
+            {
+              "label": "Rice-water",
+              "weight_boost": 2.0
+            }
+          ]
+        },
+        {
+          "id": "dehydration_signs",
+          "trigger_symptom": "diarrhea",
+          "type": "yes_no",
+          "question_en": "Are the eyes sunken? Is the child crying without tears? Is skin pinch slow to return?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0906\u0901\u0916\u0947\u0902 \u0927\u0902\u0938\u0940 \u0939\u0948\u0902? \u0930\u094b\u0924\u0947 \u0935\u0915\u094d\u0924 \u0906\u0902\u0938\u0942 \u0928\u0939\u0940\u0902 \u0906\u0924\u0947? \u0924\u094d\u0935\u091a\u093e \u0916\u0940\u0902\u091a\u0928\u0947 \u092a\u0930 \u0927\u0940\u0930\u0947 \u0932\u094c\u091f\u0924\u0940 \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 2.0
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        },
+        {
+          "id": "vomit_frequency",
+          "trigger_symptom": "vomiting",
+          "type": "severity",
+          "question_en": "How many times has the child vomited today?",
+          "question_hi": "\u0906\u091c \u0915\u093f\u0924\u0928\u0940 \u092c\u093e\u0930 \u0909\u0932\u094d\u091f\u0940 \u0939\u0941\u0908?",
+          "options": [
+            {
+              "label": "1-2 times",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "3-5 times",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "More than 5 times / everything",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "visual_check",
+          "type": "visual",
+          "question_en": "Can you show dehydration signs via photo? (sunken eyes, dry lips, skin pinch)",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0906\u092a \u092a\u093e\u0928\u0940 \u0915\u0940 \u0915\u092e\u0940 \u0915\u0947 \u0932\u0915\u094d\u0937\u0923 \u092b\u094b\u091f\u094b \u0938\u0947 \u0926\u093f\u0916\u093e \u0938\u0915\u0924\u0947 \u0939\u0948\u0902? (\u0927\u0902\u0938\u0940 \u0906\u0901\u0916\u0947\u0902, \u0938\u0942\u0916\u0947 \u0939\u094b\u0902\u0920, \u0924\u094d\u0935\u091a\u093e \u0916\u0940\u0902\u091a)",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 0.0,
+              "triggers_camera": true
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lymphatic_filariasis",
+      "condition": "lymphatic_filariasis",
+      "version": "NVBDCP-2023",
+      "patient_age_max_months": 0,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "limb_swelling",
+          "required": true,
+          "weight": 3.0
+        },
+        {
+          "symptom": "fever",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "groin_swelling",
+          "required": false,
+          "weight": 2.0
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 4.5,
+        "phc_visit": 2.5,
+        "home_care": 0.0
+      },
+      "rationale": "Limb swelling with fever or groin swelling may indicate lymphatic filariasis \u2014 blood test required per NVBDCP guidelines",
+      "follow_up_questions": [
+        {
+          "id": "swelling_duration",
+          "trigger_symptom": "limb_swelling",
+          "type": "duration",
+          "question_en": "How long has the swelling been present?",
+          "question_hi": "\u0938\u0942\u091c\u0928 \u0915\u093f\u0924\u0928\u0947 \u0938\u092e\u092f \u0938\u0947 \u0939\u0948?",
+          "options": [
+            {
+              "label": "Less than 1 week",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "1-4 weeks",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "More than 1 month",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "swelling_location",
+          "trigger_symptom": "limb_swelling",
+          "type": "severity",
+          "question_en": "Which limb is swollen? One leg / Both legs / Arm / Scrotum",
+          "question_hi": "\u0915\u094c\u0928 \u0938\u093e \u0905\u0902\u0917 \u0938\u0942\u091c\u093e \u0939\u0948? \u090f\u0915 \u092a\u0948\u0930 / \u0926\u094b\u0928\u094b\u0902 \u092a\u0948\u0930 / \u0939\u093e\u0925 / \u0905\u0902\u0921\u0915\u094b\u0937",
+          "options": [
+            {
+              "label": "One leg",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Both legs",
+              "weight_boost": 1.0
+            },
+            {
+              "label": "Arm",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Scrotum/groin",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "skin_thickening",
+          "trigger_symptom": "limb_swelling",
+          "type": "yes_no",
+          "question_en": "Is the skin on the swollen area thick, rough, or elephant-like?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0938\u0942\u091c\u0947 \u0939\u0941\u090f \u0939\u093f\u0938\u094d\u0938\u0947 \u0915\u0940 \u0924\u094d\u0935\u091a\u093e \u092e\u094b\u091f\u0940, \u0916\u0941\u0930\u0926\u0930\u0940 \u092f\u093e \u0939\u093e\u0925\u0940 \u091c\u0948\u0938\u0940 \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 1.5
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        },
+        {
+          "id": "recurring_fever",
+          "trigger_symptom": "fever",
+          "type": "yes_no",
+          "question_en": "Has there been recurring fever episodes over weeks/months?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0939\u092b\u094d\u0924\u094b\u0902/\u092e\u0939\u0940\u0928\u094b\u0902 \u0938\u0947 \u092c\u093e\u0930-\u092c\u093e\u0930 \u092c\u0941\u0916\u093e\u0930 \u0906 \u0930\u0939\u093e \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 1.0
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        },
+        {
+          "id": "visual_check",
+          "type": "visual",
+          "question_en": "Can you take a photo of the swollen limb for doctor review?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0906\u092a \u0938\u0942\u091c\u0947 \u0939\u0941\u090f \u0905\u0902\u0917 \u0915\u0940 \u092b\u094b\u091f\u094b \u0921\u0949\u0915\u094d\u091f\u0930 \u0915\u094b \u0926\u093f\u0916\u093e\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0932\u0947 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 0.0,
+              "triggers_camera": true
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "malaria_suspected",
+      "condition": "malaria_suspected",
+      "version": "NVBDCP-2023",
+      "patient_age_max_months": 0,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "fever",
+          "required": true,
+          "weight": 2.0
+        },
+        {
+          "symptom": "severe_headache",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "vomiting",
+          "required": false,
+          "weight": 1.0
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 4.0,
+        "phc_visit": 3.0,
+        "home_care": 0.0
+      },
+      "rationale": "Fever with headache and vomiting may indicate malaria per NVBDCP guidelines \u2014 blood test recommended",
+      "follow_up_questions": [
+        {
+          "id": "fever_duration",
+          "trigger_symptom": "fever",
+          "type": "duration",
+          "question_en": "How many days has the fever lasted?",
+          "question_hi": "\u092c\u0941\u0916\u093e\u0930 \u0915\u093f\u0924\u0928\u0947 \u0926\u093f\u0928 \u0938\u0947 \u0939\u0948?",
+          "options": [
+            {
+              "label": "1-2 days",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "3-5 days",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "More than 5 days",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "fever_pattern",
+          "trigger_symptom": "fever",
+          "type": "severity",
+          "question_en": "Does the fever come and go in cycles (every 2-3 days) or is it constant?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u092c\u0941\u0916\u093e\u0930 \u0930\u0941\u0915-\u0930\u0941\u0915 \u0915\u0930 \u0906\u0924\u093e \u0939\u0948 (\u0939\u0930 2-3 \u0926\u093f\u0928) \u092f\u093e \u0932\u0917\u093e\u0924\u093e\u0930 \u0939\u0948?",
+          "options": [
+            {
+              "label": "Comes and goes in cycles",
+              "weight_boost": 1.5
+            },
+            {
+              "label": "Constant fever",
+              "weight_boost": 0.5
+            }
+          ]
+        },
+        {
+          "id": "chills_sweating",
+          "trigger_symptom": "fever",
+          "type": "yes_no",
+          "question_en": "Is there shivering/chills followed by heavy sweating?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0920\u0902\u0921 \u0932\u0917\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092c\u0939\u0941\u0924 \u092a\u0938\u0940\u0928\u093e \u0906\u0924\u093e \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 1.5
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "malnutrition_screening",
+      "condition": "malnutrition_screening",
+      "version": "WHO-CMAM-2023",
+      "patient_age_max_months": 60,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "visible_wasting",
+          "required": false,
+          "weight": 3.0
+        },
+        {
+          "symptom": "bilateral_edema",
+          "required": false,
+          "weight": 3.5
+        },
+        {
+          "symptom": "unable_to_feed",
+          "required": false,
+          "weight": 2.5
+        }
+      ],
+      "risk_modifiers": [
+        {
+          "flag": "severe_malnutrition",
+          "multiplier": 1.3
+        }
+      ],
+      "thresholds": {
+        "urgent_referral": 3.0,
+        "phc_visit": 2.0,
+        "home_care": 0.0
+      },
+      "rationale": "Visible wasting or bilateral edema in under-5 may indicate severe acute malnutrition requiring urgent nutritional rehabilitation per WHO-CMAM",
+      "follow_up_questions": [
+        {
+          "id": "muac_estimate",
+          "trigger_symptom": "visible_wasting",
+          "type": "severity",
+          "question_en": "Can you wrap your fingers around the child's upper arm? (MUAC estimate)",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0906\u092a \u092c\u091a\u094d\u091a\u0947 \u0915\u0940 \u090a\u092a\u0930\u0940 \u092c\u093e\u0901\u0939 \u0915\u094b \u0905\u092a\u0928\u0940 \u0909\u0902\u0917\u0932\u093f\u092f\u094b\u0902 \u0938\u0947 \u0932\u092a\u0947\u091f \u0938\u0915\u0924\u0947 \u0939\u0948\u0902? (MUAC \u0905\u0928\u0941\u092e\u093e\u0928)",
+          "options": [
+            {
+              "label": "Fingers overlap easily (very thin)",
+              "weight_boost": 1.5
+            },
+            {
+              "label": "Fingers just touch",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Fingers don't touch",
+              "weight_boost": 0.0
+            }
+          ]
+        },
+        {
+          "id": "edema_pitting",
+          "trigger_symptom": "bilateral_edema",
+          "type": "yes_no",
+          "question_en": "Press the swollen foot with thumb for 3 seconds \u2014 does a dent remain?",
+          "question_hi": "3 \u0938\u0947\u0915\u0902\u0921 \u0915\u0947 \u0932\u093f\u090f \u0938\u0942\u091c\u0947 \u092a\u0948\u0930 \u092a\u0930 \u0905\u0902\u0917\u0942\u0920\u093e \u0926\u092c\u093e\u090f\u0902 \u2014 \u0915\u094d\u092f\u093e \u0917\u0921\u094d\u0922\u093e \u092c\u0928\u0924\u093e \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes - pitting edema",
+              "weight_boost": 1.5
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        },
+        {
+          "id": "visual_check",
+          "type": "visual",
+          "question_en": "Can you take a photo showing wasting or swelling for doctor review?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0906\u092a \u0926\u0941\u092c\u0932\u0947\u092a\u0928 \u092f\u093e \u0938\u0942\u091c\u0928 \u0915\u0940 \u092b\u094b\u091f\u094b \u0921\u0949\u0915\u094d\u091f\u0930 \u0915\u0947 \u0932\u093f\u090f \u0932\u0947 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 0.0,
+              "triggers_camera": true
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "childhood_pneumonia",
+      "condition": "childhood_pneumonia",
+      "version": "WHO-IMNCI-2023",
+      "patient_age_max_months": 60,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "fast_breathing",
+          "required": true,
+          "weight": 3.0
+        },
+        {
+          "symptom": "fever",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "chest_indrawing",
+          "required": false,
+          "weight": 2.5
+        }
+      ],
+      "risk_modifiers": [
+        {
+          "flag": "severe_malnutrition",
+          "multiplier": 1.5
+        }
+      ],
+      "thresholds": {
+        "urgent_referral": 4.5,
+        "phc_visit": 2.0,
+        "home_care": 0.0
+      },
+      "rationale": "Fast breathing in under-5 with fever/chest indrawing indicates possible pneumonia per WHO-IMNCI",
+      "follow_up_questions": [
+        {
+          "id": "fever_duration",
+          "trigger_symptom": "fever",
+          "type": "duration",
+          "question_en": "How many days has the fever lasted?",
+          "question_hi": "\u092c\u0941\u0916\u093e\u0930 \u0915\u093f\u0924\u0928\u0947 \u0926\u093f\u0928 \u0938\u0947 \u0939\u0948?",
+          "options": [
+            {
+              "label": "1-2 days",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "3-5 days",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "More than 5 days",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "breathing_severity",
+          "trigger_symptom": "fast_breathing",
+          "type": "severity",
+          "question_en": "Is breathing difficulty at rest or only during activity?",
+          "question_hi": "\u0938\u093e\u0902\u0938 \u0915\u0940 \u0924\u0915\u0932\u0940\u092b \u0906\u0930\u093e\u092e \u092e\u0947\u0902 \u0939\u0948 \u092f\u093e \u0938\u093f\u0930\u094d\u092b \u091a\u0932\u0928\u0947-\u092b\u093f\u0930\u0928\u0947 \u092a\u0930?",
+          "options": [
+            {
+              "label": "Only during activity",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "At rest also",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "mucus_color",
+          "trigger_symptom": "fast_breathing",
+          "type": "color",
+          "question_en": "What is the color of mucus/phlegm? Clear / Yellow / Green / Bloody",
+          "question_hi": "\u092c\u0932\u0917\u092e \u0915\u093e \u0930\u0902\u0917 \u0915\u0948\u0938\u093e \u0939\u0948? \u0938\u093e\u092b / \u092a\u0940\u0932\u093e / \u0939\u0930\u093e / \u0916\u0942\u0928 \u0935\u093e\u0932\u093e",
+          "options": [
+            {
+              "label": "Clear / White",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "Yellow",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Green",
+              "weight_boost": 1.0
+            },
+            {
+              "label": "Bloody",
+              "weight_boost": 2.0
+            }
+          ]
+        },
+        {
+          "id": "visual_check",
+          "type": "visual",
+          "question_en": "Is there any visible symptom you can show with a photo? (chest movement, skin color)",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0915\u094b\u0908 \u0926\u093f\u0916\u0928\u0947 \u0935\u093e\u0932\u093e \u0932\u0915\u094d\u0937\u0923 \u0939\u0948 \u091c\u094b \u092b\u094b\u091f\u094b \u0938\u0947 \u0926\u093f\u0916\u093e \u0938\u0915\u0924\u0947 \u0939\u0948\u0902? (\u091b\u093e\u0924\u0940 \u0915\u0940 \u0939\u0930\u0915\u0924, \u0924\u094d\u0935\u091a\u093e \u0915\u093e \u0930\u0902\u0917)",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 0.0,
+              "triggers_camera": true
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pregnancy_danger_signs",
+      "condition": "pregnancy_danger_signs",
+      "version": "NHM-2023",
+      "patient_age_max_months": 0,
+      "requires_pregnant": true,
+      "triggers": [
+        {
+          "symptom": "vaginal_bleeding",
+          "required": false,
+          "weight": 4.0
+        },
+        {
+          "symptom": "severe_headache",
+          "required": false,
+          "weight": 2.5
+        },
+        {
+          "symptom": "convulsions",
+          "required": false,
+          "weight": 4.0
+        },
+        {
+          "symptom": "fever",
+          "required": false,
+          "weight": 2.0
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 3.0,
+        "phc_visit": 2.0,
+        "home_care": 0.0
+      },
+      "rationale": "Danger signs in pregnancy including bleeding, severe headache, or convulsions require urgent referral per NHM guidelines",
+      "follow_up_questions": [
+        {
+          "id": "bleeding_amount",
+          "trigger_symptom": "vaginal_bleeding",
+          "type": "severity",
+          "question_en": "How much bleeding? Spotting / Soaking a pad in < 1 hour / Heavy clots",
+          "question_hi": "\u0915\u093f\u0924\u0928\u093e \u0916\u0942\u0928 \u0906 \u0930\u0939\u093e \u0939\u0948? \u0939\u0932\u094d\u0915\u093e / 1 \u0918\u0902\u091f\u0947 \u092e\u0947\u0902 \u092a\u0948\u0921 \u092d\u0930 \u091c\u093e\u0924\u093e \u0939\u0948 / \u092d\u093e\u0930\u0940 \u0925\u0915\u094d\u0915\u0947",
+          "options": [
+            {
+              "label": "Light spotting",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "Soaking a pad in <1 hour",
+              "weight_boost": 1.5
+            },
+            {
+              "label": "Heavy with clots",
+              "weight_boost": 2.5
+            }
+          ]
+        },
+        {
+          "id": "headache_severity",
+          "trigger_symptom": "severe_headache",
+          "type": "severity",
+          "question_en": "Is there blurred vision or seeing spots along with headache?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u0938\u093f\u0930\u0926\u0930\u094d\u0926 \u0915\u0947 \u0938\u093e\u0925 \u0927\u0941\u0902\u0927\u0932\u093e \u0926\u093f\u0916\u0924\u093e \u0939\u0948 \u092f\u093e \u0906\u0901\u0916\u094b\u0902 \u0915\u0947 \u0938\u093e\u092e\u0928\u0947 \u0924\u093e\u0930\u0947 \u0926\u093f\u0916\u0924\u0947 \u0939\u0948\u0902?",
+          "options": [
+            {
+              "label": "Yes - blurred vision or spots",
+              "weight_boost": 2.0
+            },
+            {
+              "label": "No - just headache",
+              "weight_boost": 0.0
+            }
+          ]
+        },
+        {
+          "id": "swelling_check",
+          "type": "yes_no",
+          "question_en": "Is there swelling on face, hands, or feet?",
+          "question_hi": "\u0915\u094d\u092f\u093e \u091a\u0947\u0939\u0930\u0947, \u0939\u093e\u0925\u094b\u0902 \u092f\u093e \u092a\u0948\u0930\u094b\u0902 \u092e\u0947\u0902 \u0938\u0942\u091c\u0928 \u0939\u0948?",
+          "options": [
+            {
+              "label": "Yes",
+              "weight_boost": 1.5
+            },
+            {
+              "label": "No",
+              "weight_boost": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "urinary_tract_infection",
+      "condition": "urinary_tract_infection",
+      "version": "NHM-PHC-2023",
+      "patient_age_max_months": 0,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "painful_urination",
+          "required": true,
+          "weight": 2.5
+        },
+        {
+          "symptom": "fever",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "abdominal_pain",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "frequent_urination",
+          "required": false,
+          "weight": 1.0
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 5.0,
+        "phc_visit": 2.5,
+        "home_care": 0.0
+      },
+      "rationale": "Painful urination with fever or abdominal pain may indicate UTI requiring treatment per NHM guidelines",
+      "follow_up_questions": [
+        {
+          "id": "urine_color",
+          "trigger_symptom": "painful_urination",
+          "type": "color",
+          "question_en": "What color is the urine? Normal / Dark yellow / Cloudy / Pink-Red",
+          "question_hi": "\u092a\u0947\u0936\u093e\u092c \u0915\u093e \u0930\u0902\u0917 \u0915\u0948\u0938\u093e \u0939\u0948? \u0938\u093e\u092e\u093e\u0928\u094d\u092f / \u0917\u0939\u0930\u093e \u092a\u0940\u0932\u093e / \u0927\u0941\u0902\u0927\u0932\u093e / \u0917\u0941\u0932\u093e\u092c\u0940-\u0932\u093e\u0932",
+          "options": [
+            {
+              "label": "Normal / Light yellow",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "Dark yellow",
+              "weight_boost": 0.3
+            },
+            {
+              "label": "Cloudy / Smelly",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Pink / Red (blood)",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "urination_frequency",
+          "trigger_symptom": "painful_urination",
+          "type": "severity",
+          "question_en": "How often is urination happening? Normal / Frequent / Very frequent (every few minutes)",
+          "question_hi": "\u092a\u0947\u0936\u093e\u092c \u0915\u093f\u0924\u0928\u0940 \u092c\u093e\u0930 \u0906 \u0930\u0939\u093e \u0939\u0948? \u0938\u093e\u092e\u093e\u0928\u094d\u092f / \u092c\u093e\u0930-\u092c\u093e\u0930 / \u092c\u0939\u0941\u0924 \u091c\u094d\u092f\u093e\u0926\u093e (\u0939\u0930 \u0915\u0941\u091b \u092e\u093f\u0928\u091f)",
+          "options": [
+            {
+              "label": "Normal frequency",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "Frequent",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Very frequent (every few minutes)",
+              "weight_boost": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vaginal_discharge",
+      "condition": "vaginal_discharge",
+      "version": "NHM-RH-2023",
+      "patient_age_max_months": 0,
+      "requires_pregnant": false,
+      "triggers": [
+        {
+          "symptom": "abnormal_discharge",
+          "required": true,
+          "weight": 2.5
+        },
+        {
+          "symptom": "fever",
+          "required": false,
+          "weight": 1.5
+        },
+        {
+          "symptom": "abdominal_pain",
+          "required": false,
+          "weight": 2.0
+        },
+        {
+          "symptom": "foul_smell",
+          "required": false,
+          "weight": 1.5
+        }
+      ],
+      "risk_modifiers": [],
+      "thresholds": {
+        "urgent_referral": 5.0,
+        "phc_visit": 2.5,
+        "home_care": 0.0
+      },
+      "rationale": "Abnormal vaginal discharge with fever or pain may indicate infection requiring medical attention per NHM guidelines",
+      "follow_up_questions": [
+        {
+          "id": "discharge_color",
+          "trigger_symptom": "abnormal_discharge",
+          "type": "color",
+          "question_en": "What is the color of the discharge? White / Yellow-Green / Gray / Bloody",
+          "question_hi": "\u0938\u094d\u0930\u093e\u0935 \u0915\u093e \u0930\u0902\u0917 \u0915\u0948\u0938\u093e \u0939\u0948? \u0938\u092b\u0947\u0926 / \u092a\u0940\u0932\u093e-\u0939\u0930\u093e / \u0938\u0932\u0947\u091f\u0940 / \u0916\u0942\u0928 \u0935\u093e\u0932\u093e",
+          "options": [
+            {
+              "label": "White / Normal",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "Yellow-Green",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "Gray / Foul smell",
+              "weight_boost": 1.0
+            },
+            {
+              "label": "Bloody",
+              "weight_boost": 1.5
+            }
+          ]
+        },
+        {
+          "id": "discharge_duration",
+          "trigger_symptom": "abnormal_discharge",
+          "type": "duration",
+          "question_en": "How long has the discharge been abnormal?",
+          "question_hi": "\u0905\u0938\u093e\u092e\u093e\u0928\u094d\u092f \u0938\u094d\u0930\u093e\u0935 \u0915\u093f\u0924\u0928\u0947 \u0926\u093f\u0928 \u0938\u0947 \u0939\u0948?",
+          "options": [
+            {
+              "label": "1-3 days",
+              "weight_boost": 0.0
+            },
+            {
+              "label": "4-7 days",
+              "weight_boost": 0.5
+            },
+            {
+              "label": "More than 1 week",
+              "weight_boost": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+# NHM: Anemia Screening
+# Source: NHM Anemia Mukt Bharat Guidelines 2023
+condition: anemia_screening
+version: NHM-AMB-2023
+patient_age_max_months: 0
+triggers:
+  - symptom: pallor
+    required: true
+    weight: 2.5
+  - symptom: weakness
+    required: false
+    weight: 1.5
+  - symptom: breathlessness
+    required: false
+    weight: 2.0
+risk_modifiers: []
+thresholds:
+  urgent_referral: 5.0
+  phc_visit: 2.5
+  home_care: 0.0
+rationale: "Pallor with weakness or breathlessness may indicate anemia requiring Hb test and iron supplementation per NHM Anemia Mukt Bharat"
+follow_up_questions:
+  - id: pallor_location
+    trigger_symptom: pallor
+    type: severity
+    question_en: "Where is the pallor visible? Inner eyelid / Nails / Palms / Tongue"
+    question_hi: "पीलापन कहाँ दिख रहा है? पलक के अंदर / नाखून / हथेली / जीभ"
+    options:
+      - label: "One area only"
+        weight_boost: 0.0
+      - label: "Multiple areas (eyelid + nails + palms)"
+        weight_boost: 1.0
+  - id: breathlessness_severity
+    trigger_symptom: breathlessness
+    type: severity
+    question_en: "Does breathlessness happen at rest or only during work?"
+    question_hi: "सांस फूलना आराम में होता है या काम करते वक्त?"
+    options:
+      - label: "Only during work"
+        weight_boost: 0.0
+      - label: "At rest also"
+        weight_boost: 1.5
+  - id: diet_history
+    type: yes_no
+    question_en: "Is the patient eating green vegetables and iron-rich food regularly?"
+    question_hi: "क्या मरीज़ हरी सब्ज़ी और लौह वाला खाना खाता है?"
+    options:
+      - label: "Yes"
+        weight_boost: 0.0
+      - label: "No - poor diet"
+        weight_boost: 0.5
+  - id: visual_check
+    type: visual
+    question_en: "Can you take a photo of inner eyelid, nails, or palms for anemia check?"
+    question_hi: "क्या आप पलक के अंदर, नाखून या हथेली की फोटो ले सकते हैं?"
+    options:
+      - label: "Yes"
+        weight_boost: 0.0
+        triggers_camera: true
+      - label: "No"
+        weight_boost: 0.0

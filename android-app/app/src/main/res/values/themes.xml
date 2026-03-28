@@ -5,5 +5,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:statusBarColor">@color/colorHeaderStart</item>
+        <item name="android:navigationBarColor">@color/colorBackground</item>
     </style>
 </resources>

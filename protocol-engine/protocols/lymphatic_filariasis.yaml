@@ -1,0 +1,78 @@
+# NVBDCP: Lymphatic Filariasis Assessment
+# Source: National Vector Borne Disease Control Programme (NVBDCP) 2023
+condition: lymphatic_filariasis
+version: NVBDCP-2023
+patient_age_max_months: 0
+triggers:
+  - symptom: limb_swelling
+    required: true
+    weight: 3.0
+  - symptom: fever
+    required: false
+    weight: 1.5
+  - symptom: groin_swelling
+    required: false
+    weight: 2.0
+risk_modifiers: []
+thresholds:
+  urgent_referral: 4.5
+  phc_visit: 2.5
+  home_care: 0.0
+rationale: "Limb swelling with fever or groin swelling may indicate lymphatic filariasis — blood test required per NVBDCP guidelines"
+follow_up_questions:
+  - id: swelling_duration
+    trigger_symptom: limb_swelling
+    type: duration
+    question_en: "How long has the swelling been present?"
+    question_hi: "सूजन कितने समय से है?"
+    options:
+      - label: "Less than 1 week"
+        weight_boost: 0.0
+      - label: "1-4 weeks"
+        weight_boost: 0.5
+      - label: "More than 1 month"
+        weight_boost: 1.5
+  - id: swelling_location
+    trigger_symptom: limb_swelling
+    type: severity
+    question_en: "Which limb is swollen? One leg / Both legs / Arm / Scrotum"
+    question_hi: "कौन सा अंग सूजा है? एक पैर / दोनों पैर / हाथ / अंडकोष"
+    options:
+      - label: "One leg"
+        weight_boost: 0.5
+      - label: "Both legs"
+        weight_boost: 1.0
+      - label: "Arm"
+        weight_boost: 0.5
+      - label: "Scrotum/groin"
+        weight_boost: 1.5
+  - id: skin_thickening
+    trigger_symptom: limb_swelling
+    type: yes_no
+    question_en: "Is the skin on the swollen area thick, rough, or elephant-like?"
+    question_hi: "क्या सूजे हुए हिस्से की त्वचा मोटी, खुरदरी या हाथी जैसी है?"
+    options:
+      - label: "Yes"
+        weight_boost: 1.5
+      - label: "No"
+        weight_boost: 0.0
+  - id: recurring_fever
+    trigger_symptom: fever
+    type: yes_no
+    question_en: "Has there been recurring fever episodes over weeks/months?"
+    question_hi: "क्या हफ्तों/महीनों से बार-बार बुखार आ रहा है?"
+    options:
+      - label: "Yes"
+        weight_boost: 1.0
+      - label: "No"
+        weight_boost: 0.0
+  - id: visual_check
+    type: visual
+    question_en: "Can you take a photo of the swollen limb for doctor review?"
+    question_hi: "क्या आप सूजे हुए अंग की फोटो डॉक्टर को दिखाने के लिए ले सकते हैं?"
+    options:
+      - label: "Yes"
+        weight_boost: 0.0
+        triggers_camera: true
+      - label: "No"
+        weight_boost: 0.0

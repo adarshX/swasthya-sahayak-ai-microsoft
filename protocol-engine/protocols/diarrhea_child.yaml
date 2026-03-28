@@ -1,0 +1,82 @@
+# WHO-IMNCI: Childhood Diarrhea Assessment
+# Source: WHO Integrated Management of Childhood Illness (IMNCI) 2023
+condition: childhood_diarrhea
+version: WHO-IMNCI-2023
+patient_age_max_months: 60
+triggers:
+  - symptom: diarrhea
+    required: true
+    weight: 2.5
+  - symptom: vomiting
+    required: false
+    weight: 1.5
+  - symptom: fever
+    required: false
+    weight: 1.0
+risk_modifiers:
+  - flag: severe_malnutrition
+    multiplier: 1.5
+thresholds:
+  urgent_referral: 4.0
+  phc_visit: 2.0
+  home_care: 0.0
+rationale: "Diarrhea with vomiting/fever in under-5 requires urgent rehydration per WHO-IMNCI"
+follow_up_questions:
+  - id: diarrhea_duration
+    trigger_symptom: diarrhea
+    type: duration
+    question_en: "How many days has the diarrhea lasted?"
+    question_hi: "दस्त कितने दिन से है?"
+    options:
+      - label: "1-2 days"
+        weight_boost: 0.0
+      - label: "3-5 days"
+        weight_boost: 0.5
+      - label: "More than 5 days"
+        weight_boost: 1.5
+  - id: stool_appearance
+    trigger_symptom: diarrhea
+    type: color
+    question_en: "What does the stool look like? Watery / Mucus / Bloody / Rice-water"
+    question_hi: "पॉटी कैसी दिखती है? पानी जैसी / चिपचिपी / खून वाली / चावल के पानी जैसी"
+    options:
+      - label: "Watery"
+        weight_boost: 0.5
+      - label: "Mucus"
+        weight_boost: 0.5
+      - label: "Bloody"
+        weight_boost: 2.0
+      - label: "Rice-water"
+        weight_boost: 2.0
+  - id: dehydration_signs
+    trigger_symptom: diarrhea
+    type: yes_no
+    question_en: "Are the eyes sunken? Is the child crying without tears? Is skin pinch slow to return?"
+    question_hi: "क्या आँखें धंसी हैं? रोते वक्त आंसू नहीं आते? त्वचा खींचने पर धीरे लौटती है?"
+    options:
+      - label: "Yes"
+        weight_boost: 2.0
+      - label: "No"
+        weight_boost: 0.0
+  - id: vomit_frequency
+    trigger_symptom: vomiting
+    type: severity
+    question_en: "How many times has the child vomited today?"
+    question_hi: "आज कितनी बार उल्टी हुई?"
+    options:
+      - label: "1-2 times"
+        weight_boost: 0.0
+      - label: "3-5 times"
+        weight_boost: 0.5
+      - label: "More than 5 times / everything"
+        weight_boost: 1.5
+  - id: visual_check
+    type: visual
+    question_en: "Can you show dehydration signs via photo? (sunken eyes, dry lips, skin pinch)"
+    question_hi: "क्या आप पानी की कमी के लक्षण फोटो से दिखा सकते हैं? (धंसी आँखें, सूखे होंठ, त्वचा खींच)"
+    options:
+      - label: "Yes"
+        weight_boost: 0.0
+        triggers_camera: true
+      - label: "No"
+        weight_boost: 0.0

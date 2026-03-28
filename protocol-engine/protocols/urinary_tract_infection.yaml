@@ -1,0 +1,51 @@
+# NHM: Urinary Tract Infection (UTI) Assessment
+# Source: NHM Primary Healthcare Guidelines 2023
+condition: urinary_tract_infection
+version: NHM-PHC-2023
+patient_age_max_months: 0
+triggers:
+  - symptom: painful_urination
+    required: true
+    weight: 2.5
+  - symptom: fever
+    required: false
+    weight: 1.5
+  - symptom: abdominal_pain
+    required: false
+    weight: 1.5
+  - symptom: frequent_urination
+    required: false
+    weight: 1.0
+risk_modifiers: []
+thresholds:
+  urgent_referral: 5.0
+  phc_visit: 2.5
+  home_care: 0.0
+rationale: "Painful urination with fever or abdominal pain may indicate UTI requiring treatment per NHM guidelines"
+follow_up_questions:
+  - id: urine_color
+    trigger_symptom: painful_urination
+    type: color
+    question_en: "What color is the urine? Normal / Dark yellow / Cloudy / Pink-Red"
+    question_hi: "पेशाब का रंग कैसा है? सामान्य / गहरा पीला / धुंधला / गुलाबी-लाल"
+    options:
+      - label: "Normal / Light yellow"
+        weight_boost: 0.0
+      - label: "Dark yellow"
+        weight_boost: 0.3
+      - label: "Cloudy / Smelly"
+        weight_boost: 0.5
+      - label: "Pink / Red (blood)"
+        weight_boost: 1.5
+  - id: urination_frequency
+    trigger_symptom: painful_urination
+    type: severity
+    question_en: "How often is urination happening? Normal / Frequent / Very frequent (every few minutes)"
+    question_hi: "पेशाब कितनी बार आ रहा है? सामान्य / बार-बार / बहुत ज्यादा (हर कुछ मिनट)"
+    options:
+      - label: "Normal frequency"
+        weight_boost: 0.0
+      - label: "Frequent"
+        weight_boost: 0.5
+      - label: "Very frequent (every few minutes)"
+        weight_boost: 1.0

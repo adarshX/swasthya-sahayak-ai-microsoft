@@ -1,0 +1,56 @@
+# WHO-IMNCI: Severe Acute Malnutrition Screening
+# Source: WHO CMAM Protocol + NHM Nutrition Guidelines 2023
+condition: malnutrition_screening
+version: WHO-CMAM-2023
+patient_age_max_months: 60
+triggers:
+  - symptom: visible_wasting
+    required: false
+    weight: 3.0
+  - symptom: bilateral_edema
+    required: false
+    weight: 3.5
+  - symptom: unable_to_feed
+    required: false
+    weight: 2.5
+risk_modifiers:
+  - flag: severe_malnutrition
+    multiplier: 1.3
+thresholds:
+  urgent_referral: 3.0
+  phc_visit: 2.0
+  home_care: 0.0
+rationale: "Visible wasting or bilateral edema in under-5 may indicate severe acute malnutrition requiring urgent nutritional rehabilitation per WHO-CMAM"
+follow_up_questions:
+  - id: muac_estimate
+    trigger_symptom: visible_wasting
+    type: severity
+    question_en: "Can you wrap your fingers around the child's upper arm? (MUAC estimate)"
+    question_hi: "क्या आप बच्चे की ऊपरी बाँह को अपनी उंगलियों से लपेट सकते हैं? (MUAC अनुमान)"
+    options:
+      - label: "Fingers overlap easily (very thin)"
+        weight_boost: 1.5
+      - label: "Fingers just touch"
+        weight_boost: 0.5
+      - label: "Fingers don't touch"
+        weight_boost: 0.0
+  - id: edema_pitting
+    trigger_symptom: bilateral_edema
+    type: yes_no
+    question_en: "Press the swollen foot with thumb for 3 seconds — does a dent remain?"
+    question_hi: "3 सेकंड के लिए सूजे पैर पर अंगूठा दबाएं — क्या गड्ढा बनता है?"
+    options:
+      - label: "Yes - pitting edema"
+        weight_boost: 1.5
+      - label: "No"
+        weight_boost: 0.0
+  - id: visual_check
+    type: visual
+    question_en: "Can you take a photo showing wasting or swelling for doctor review?"
+    question_hi: "क्या आप दुबलेपन या सूजन की फोटो डॉक्टर के लिए ले सकते हैं?"
+    options:
+      - label: "Yes"
+        weight_boost: 0.0
+        triggers_camera: true
+      - label: "No"
+        weight_boost: 0.0

@@ -1,0 +1,57 @@
+# NHM: Pregnancy Danger Signs Assessment
+# Source: National Health Mission High-Risk Pregnancy Guidelines 2023
+condition: pregnancy_danger_signs
+version: NHM-2023
+patient_age_max_months: 0
+requires_pregnant: true
+triggers:
+  - symptom: vaginal_bleeding
+    required: false
+    weight: 4.0
+  - symptom: severe_headache
+    required: false
+    weight: 2.5
+  - symptom: convulsions
+    required: false
+    weight: 4.0
+  - symptom: fever
+    required: false
+    weight: 2.0
+risk_modifiers: []
+thresholds:
+  urgent_referral: 3.0
+  phc_visit: 2.0
+  home_care: 0.0
+rationale: "Danger signs in pregnancy including bleeding, severe headache, or convulsions require urgent referral per NHM guidelines"
+follow_up_questions:
+  - id: bleeding_amount
+    trigger_symptom: vaginal_bleeding
+    type: severity
+    question_en: "How much bleeding? Spotting / Soaking a pad in < 1 hour / Heavy clots"
+    question_hi: "कितना खून आ रहा है? हल्का / 1 घंटे में पैड भर जाता है / भारी थक्के"
+    options:
+      - label: "Light spotting"
+        weight_boost: 0.0
+      - label: "Soaking a pad in <1 hour"
+        weight_boost: 1.5
+      - label: "Heavy with clots"
+        weight_boost: 2.5
+  - id: headache_severity
+    trigger_symptom: severe_headache
+    type: severity
+    question_en: "Is there blurred vision or seeing spots along with headache?"
+    question_hi: "क्या सिरदर्द के साथ धुंधला दिखता है या आँखों के सामने तारे दिखते हैं?"
+    options:
+      - label: "Yes - blurred vision or spots"
+        weight_boost: 2.0
+      - label: "No - just headache"
+        weight_boost: 0.0
+  - id: swelling_check
+    type: yes_no
+    question_en: "Is there swelling on face, hands, or feet?"
+    question_hi: "क्या चेहरे, हाथों या पैरों में सूजन है?"
+    options:
+      - label: "Yes"
+        weight_boost: 1.5
+      - label: "No"
+        weight_boost: 0.0

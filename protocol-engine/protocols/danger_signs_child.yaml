@@ -1,0 +1,53 @@
+# WHO-IMNCI: General Danger Signs in Under-5
+# Source: WHO Integrated Management of Childhood Illness (IMNCI) 2023
+condition: general_danger_signs
+version: WHO-IMNCI-2023
+patient_age_max_months: 60
+triggers:
+  - symptom: convulsions
+    required: false
+    weight: 4.0
+  - symptom: unable_to_feed
+    required: false
+    weight: 3.5
+  - symptom: vomiting
+    required: false
+    weight: 1.5
+risk_modifiers: []
+thresholds:
+  urgent_referral: 3.0
+  phc_visit: 1.5
+  home_care: 0.0
+rationale: "General danger signs in under-5 such as convulsions or inability to feed require immediate referral per WHO-IMNCI"
+follow_up_questions:
+  - id: convulsion_duration
+    trigger_symptom: convulsions
+    type: duration
+    question_en: "How long did the convulsion/seizure last?"
+    question_hi: "दौरा कितनी देर तक चला?"
+    options:
+      - label: "Less than 5 minutes"
+        weight_boost: 0.0
+      - label: "5-15 minutes"
+        weight_boost: 1.0
+      - label: "More than 15 minutes"
+        weight_boost: 2.0
+  - id: feeding_attempt
+    trigger_symptom: unable_to_feed
+    type: severity
+    question_en: "Is the child refusing all food/milk or just eating less?"
+    question_hi: "क्या बच्चा सब खाना/दूध मना कर रहा है या बस कम खा रहा है?"
+    options:
+      - label: "Eating less than usual"
+        weight_boost: 0.0
+      - label: "Refusing everything"
+        weight_boost: 1.5
+  - id: consciousness
+    type: yes_no
+    question_en: "Is the child conscious and responsive? Can they open eyes and respond?"
+    question_hi: "क्या बच्चा होश में है? आँखें खोल रहा है और प्रतिक्रिया कर रहा है?"
+    options:
+      - label: "Yes - conscious"
+        weight_boost: 0.0
+      - label: "No - lethargic/unconscious"
+        weight_boost: 2.5

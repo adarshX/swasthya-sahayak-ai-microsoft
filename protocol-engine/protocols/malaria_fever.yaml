@@ -1,0 +1,54 @@
+# NVBDCP: Suspected Malaria / Fever Assessment
+# Source: National Vector Borne Disease Control Programme (NVBDCP) 2023
+condition: malaria_suspected
+version: NVBDCP-2023
+patient_age_max_months: 0
+triggers:
+  - symptom: fever
+    required: true
+    weight: 2.0
+  - symptom: severe_headache
+    required: false
+    weight: 1.5
+  - symptom: vomiting
+    required: false
+    weight: 1.0
+risk_modifiers: []
+thresholds:
+  urgent_referral: 4.0
+  phc_visit: 3.0
+  home_care: 0.0
+rationale: "Fever with headache and vomiting may indicate malaria per NVBDCP guidelines — blood test recommended"
+follow_up_questions:
+  - id: fever_duration
+    trigger_symptom: fever
+    type: duration
+    question_en: "How many days has the fever lasted?"
+    question_hi: "बुखार कितने दिन से है?"
+    options:
+      - label: "1-2 days"
+        weight_boost: 0.0
+      - label: "3-5 days"
+        weight_boost: 0.5
+      - label: "More than 5 days"
+        weight_boost: 1.5
+  - id: fever_pattern
+    trigger_symptom: fever
+    type: severity
+    question_en: "Does the fever come and go in cycles (every 2-3 days) or is it constant?"
+    question_hi: "क्या बुखार रुक-रुक कर आता है (हर 2-3 दिन) या लगातार है?"
+    options:
+      - label: "Comes and goes in cycles"
+        weight_boost: 1.5
+      - label: "Constant fever"
+        weight_boost: 0.5
+  - id: chills_sweating
+    trigger_symptom: fever
+    type: yes_no
+    question_en: "Is there shivering/chills followed by heavy sweating?"
+    question_hi: "क्या ठंड लगने के बाद बहुत पसीना आता है?"
+    options:
+      - label: "Yes"
+        weight_boost: 1.5
+      - label: "No"
+        weight_boost: 0.0

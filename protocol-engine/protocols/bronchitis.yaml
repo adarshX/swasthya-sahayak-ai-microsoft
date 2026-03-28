@@ -1,0 +1,46 @@
+# Doctor-created protocol: bronchitis
+# Source: Doctor-created
+condition: bronchitis
+version: doctor-20260324
+patient_age_max_months: 0
+triggers:
+  - symptom: severe_cough
+    required: true
+    weight: 2
+  - symptom: breathing_issues
+    required: true
+    weight: 2
+  - symptom: fever
+    required: false
+    weight: 0.5
+risk_modifiers: []
+thresholds:
+  urgent_referral: 4.5
+  phc_visit: 2.0
+  home_care: 0.0
+rationale: "severe cough and unable to breathe with multiple attacks of this "
+follow_up_questions:
+  - id: cough_duration
+    trigger_symptom: severe_cough
+    type: duration
+    question_en: "How many days has the cough lasted?"
+    question_hi: "खांसी कितने दिन से है?"
+    options:
+      - label: "1-3 days"
+        weight_boost: 0.0
+      - label: "4-7 days"
+        weight_boost: 0.5
+      - label: "More than 1 week"
+        weight_boost: 1.0
+  - id: breathing_when
+    trigger_symptom: breathing_issues
+    type: severity
+    question_en: "When does breathing difficulty occur? During coughing / At rest / While sleeping"
+    question_hi: "सांस की तकलीफ कब होती है? खांसते वक्त / आराम में / सोते वक्त"
+    options:
+      - label: "Only during coughing"
+        weight_boost: 0.0
+      - label: "At rest"
+        weight_boost: 1.0
+      - label: "While sleeping (wakes up)"
+        weight_boost: 1.5

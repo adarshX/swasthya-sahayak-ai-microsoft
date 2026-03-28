@@ -1,0 +1,70 @@
+# WHO-IMNCI: Childhood Pneumonia Assessment
+# Source: WHO Integrated Management of Childhood Illness (IMNCI) 2023
+condition: childhood_pneumonia
+version: WHO-IMNCI-2023
+patient_age_max_months: 60
+triggers:
+  - symptom: fast_breathing
+    required: true
+    weight: 3.0
+  - symptom: fever
+    required: false
+    weight: 1.5
+  - symptom: chest_indrawing
+    required: false
+    weight: 2.5
+risk_modifiers:
+  - flag: severe_malnutrition
+    multiplier: 1.5
+thresholds:
+  urgent_referral: 4.5
+  phc_visit: 2.0
+  home_care: 0.0
+rationale: "Fast breathing in under-5 with fever/chest indrawing indicates possible pneumonia per WHO-IMNCI"
+follow_up_questions:
+  - id: fever_duration
+    trigger_symptom: fever
+    type: duration
+    question_en: "How many days has the fever lasted?"
+    question_hi: "बुखार कितने दिन से है?"
+    options:
+      - label: "1-2 days"
+        weight_boost: 0.0
+      - label: "3-5 days"
+        weight_boost: 0.5
+      - label: "More than 5 days"
+        weight_boost: 1.5
+  - id: breathing_severity
+    trigger_symptom: fast_breathing
+    type: severity
+    question_en: "Is breathing difficulty at rest or only during activity?"
+    question_hi: "सांस की तकलीफ आराम में है या सिर्फ चलने-फिरने पर?"
+    options:
+      - label: "Only during activity"
+        weight_boost: 0.0
+      - label: "At rest also"
+        weight_boost: 1.5
+  - id: mucus_color
+    trigger_symptom: fast_breathing
+    type: color
+    question_en: "What is the color of mucus/phlegm? Clear / Yellow / Green / Bloody"
+    question_hi: "बलगम का रंग कैसा है? साफ / पीला / हरा / खून वाला"
+    options:
+      - label: "Clear / White"
+        weight_boost: 0.0
+      - label: "Yellow"
+        weight_boost: 0.5
+      - label: "Green"
+        weight_boost: 1.0
+      - label: "Bloody"
+        weight_boost: 2.0
+  - id: visual_check
+    type: visual
+    question_en: "Is there any visible symptom you can show with a photo? (chest movement, skin color)"
+    question_hi: "क्या कोई दिखने वाला लक्षण है जो फोटो से दिखा सकते हैं? (छाती की हरकत, त्वचा का रंग)"
+    options:
+      - label: "Yes"
+        weight_boost: 0.0
+        triggers_camera: true
+      - label: "No"
+        weight_boost: 0.0

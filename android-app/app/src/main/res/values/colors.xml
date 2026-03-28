@@ -4,18 +4,32 @@
     <color name="colorPrimary">#1565C0</color>
     <color name="colorPrimaryDark">#0D47A1</color>
     <color name="colorAccent">#1976D2</color>
-    <color name="colorBackground">#EEF2FF</color>
+    <color name="colorBackground">#F0F4FF</color>
     <color name="colorSurface">#FFFFFF</color>
+    <color name="colorSurfaceWarm">#FAFBFF</color>
 
     <!-- Triage levels -->
     <color name="colorUrgent">#C62828</color>
     <color name="colorPHC">#E65100</color>
     <color name="colorHomeCare">#2E7D32</color>
 
+    <!-- Accent utilities -->
+    <color name="colorSuccess">#00897B</color>
+    <color name="colorWarning">#F9A825</color>
+    <color name="colorDashboard">#5E35B1</color>
+    <color name="colorVaccine">#2E7D32</color>
+
     <!-- Text -->
-    <color name="colorTextPrimary">#212121</color>
-    <color name="colorTextSecondary">#616161</color>
-    <color name="colorTextHint">#9E9E9E</color>
-    <color name="colorDivider">#E0E0E0</color>
+    <color name="colorTextPrimary">#1A1F36</color>
+    <color name="colorTextSecondary">#5A6178</color>
+    <color name="colorTextHint">#9EA4B8</color>
+    <color name="colorDivider">#E8ECF4</color>
     <color name="colorWhite">#FFFFFF</color>
+
+    <!-- Card & header -->
+    <color name="colorHeaderStart">#0D47A1</color>
+    <color name="colorHeaderEnd">#1976D2</color>
+    <color name="colorCardBorder">#E8ECF4</color>
+    <color name="colorStepBg">#E8F0FE</color>
+    <color name="colorStepText">#1565C0</color>
 </resources>

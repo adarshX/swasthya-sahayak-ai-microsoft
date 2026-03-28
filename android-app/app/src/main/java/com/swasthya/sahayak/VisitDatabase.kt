@@ -15,15 +15,31 @@ interface VisitDao {
     suspend fun markSynced(id: Int)
 }
 
-@Database(entities = [VisitRecord::class], version = 1, exportSchema = false)
+@Database(
+    entities = [
+        VisitRecord::class,
+        Patient::class,
+        Household::class,
+        AshaWorker::class,
+        Pregnancy::class,
+        Vaccination::class,
+        RiskFlag::class,
+        TriageResultEntity::class
+    ],
+    version = 3,
+    exportSchema = false
+)
 abstract class VisitDatabase : RoomDatabase() {
     abstract fun visitDao(): VisitDao
+    abstract fun patientDao(): PatientDao
 
     companion object {
         @Volatile private var INSTANCE: VisitDatabase? = null
         fun get(context: Context): VisitDatabase =
             INSTANCE ?: synchronized(this) {
-                Room.databaseBuilder(context, VisitDatabase::class.java, "visit_db").build()
+                Room.databaseBuilder(context, VisitDatabase::class.java, "visit_db")
+                    .fallbackToDestructiveMigration()
+                    .build()
                     .also { INSTANCE = it }
             }
     }

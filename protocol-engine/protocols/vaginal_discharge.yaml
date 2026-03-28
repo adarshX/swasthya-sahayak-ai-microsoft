@@ -1,0 +1,51 @@
+# NHM: Vaginal Discharge Assessment (Women's Health)
+# Source: NHM Reproductive Health Guidelines 2023
+condition: vaginal_discharge
+version: NHM-RH-2023
+patient_age_max_months: 0
+triggers:
+  - symptom: abnormal_discharge
+    required: true
+    weight: 2.5
+  - symptom: fever
+    required: false
+    weight: 1.5
+  - symptom: abdominal_pain
+    required: false
+    weight: 2.0
+  - symptom: foul_smell
+    required: false
+    weight: 1.5
+risk_modifiers: []
+thresholds:
+  urgent_referral: 5.0
+  phc_visit: 2.5
+  home_care: 0.0
+rationale: "Abnormal vaginal discharge with fever or pain may indicate infection requiring medical attention per NHM guidelines"
+follow_up_questions:
+  - id: discharge_color
+    trigger_symptom: abnormal_discharge
+    type: color
+    question_en: "What is the color of the discharge? White / Yellow-Green / Gray / Bloody"
+    question_hi: "स्राव का रंग कैसा है? सफेद / पीला-हरा / सलेटी / खून वाला"
+    options:
+      - label: "White / Normal"
+        weight_boost: 0.0
+      - label: "Yellow-Green"
+        weight_boost: 0.5
+      - label: "Gray / Foul smell"
+        weight_boost: 1.0
+      - label: "Bloody"
+        weight_boost: 1.5
+  - id: discharge_duration
+    trigger_symptom: abnormal_discharge
+    type: duration
+    question_en: "How long has the discharge been abnormal?"
+    question_hi: "असामान्य स्राव कितने दिन से है?"
+    options:
+      - label: "1-3 days"
+        weight_boost: 0.0
+      - label: "4-7 days"
+        weight_boost: 0.5
+      - label: "More than 1 week"
+        weight_boost: 1.0
